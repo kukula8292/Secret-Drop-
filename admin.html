@@ -7,41 +7,27 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 * { box-sizing:border-box; margin:0; padding:0; }
+
+/* BODY STYLING */
 body { font-family:'Share Tech Mono', monospace; background:#010201; color:#00ff00; padding:40px; overflow-x:hidden; }
 body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background:radial-gradient(circle at 20% 30%,#00ff0022,transparent 40%), radial-gradient(circle at 80% 70%,#00ff0022,transparent 40%); z-index:-2; }
 body::after { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image: linear-gradient(#00ff0022 1px, transparent 1px), linear-gradient(90deg,#00ff0022 1px, transparent 1px); background-size:40px 40px; opacity:0.2; z-index:-1; }
-/* HIDE PAGE UNTIL LOGIN */
-body > *:not(#passPopup) { display: none; }
+
+/* HEADINGS */
 h1 { text-align:center; font-size:40px; margin-bottom:30px; text-shadow:0 0 12px #00ff00; }
-h2 { text-shadow:0 0 6px #00ff00; margin-top:40px; margin-bottom:12px; }
-.tabs { display:flex; justify-content:center; gap:20px; margin-bottom:20px; }
-.tab { padding:8px 20px; border-radius:8px; cursor:pointer; border:1px solid #00ff0055; transition:0.2s; }
-.tab.active { background:#001a00; box-shadow:0 0 10px #00ff00; }
-.search-bar { display:flex; justify-content:center; margin-bottom:20px; }
-.search-bar input { padding:8px 12px; width:300px; border-radius:6px; border:none; background:#001000; color:#00ff00; font-family:'Share Tech Mono', monospace; }
-.analytics { text-align:center; margin-bottom:12px; font-size:16px; }
-.grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px; }
-.card { background:#001a00; border:1px solid #00ff0055; border-radius:10px; padding:16px; box-shadow:0 0 10px #00ff0033, inset 0 0 5px #00ff0011; transition:0.3s; }
-.card:hover { transform:translateY(-4px) scale(1.01); box-shadow:0 0 15px #00ff00, inset 0 0 8px #00ff0033; }
-input, textarea { width:100%; margin-top:8px; padding:8px; background:#001000; color:#00ff00; border:1px solid #00ff0055; border-radius:6px; font-family:inherit; }
-textarea { resize:none; height:80px; }
-button { margin-top:6px; padding:6px 12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-family:inherit; transition:0.2s; }
-button.save { background:#00ff00; color:#001; }
-button.delete { background:#ff0000; color:#001; }
-button.update { background:#00ff00; color:#001; }
-button.approve { background:#00ff00; color:#001; }
-button:hover { filter:brightness(1.2); transform:scale(1.05); }
-.pagination { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:12px; }
-.page-btn { padding:4px 10px; border:1px solid #00ff00; cursor:pointer; }
-.page-btn.active { background:#001a00; box-shadow:0 0 6px #00ff00; }
+
+/* PASSWORD POPUP */
 #passPopup { position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); display:flex; justify-content:center; align-items:center; flex-direction: column; z-index:1000; }
 #passPopup input { padding:12px; border-radius:10px; border:none; font-size:16px; margin-bottom:12px; width:300px; background:#001; color:#00ff00; }
 #passPopup button { padding:12px 20px; border:none; border-radius:10px; cursor:pointer; background:#00ff00; font-weight:bold; font-family:'Share Tech Mono', monospace; }
+
+/* HACKER POPUP */
 #hackerPopup { position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:14px 24px; border-radius:16px; background:rgba(0,255,0,0.9); color:#001; font-weight:bold; box-shadow:0 6px 15px rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:0.4s; z-index:9999; text-align:center; min-width:200px; }
 </style>
 </head>
 <body>
 
+<!-- PASSWORD POPUP -->
 <div id="passPopup">
   <h1>ENTER ADMIN PASSWORD</h1>
   <input type="password" id="adminPass" placeholder="Password">
@@ -50,31 +36,12 @@ button:hover { filter:brightness(1.2); transform:scale(1.05); }
 
 <h1>HACKER ADMIN CONTROL PANEL</h1>
 
-<div class="tabs">
-  <div class="tab active" data-tab="all">All Messages</div>
-  <div class="tab" data-tab="flagged">Flagged Messages</div>
-</div>
-
-<div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Search messages by name or content">
-</div>
-
-<div class="analytics">
-  Total Messages: <span id="totalCount">0</span> | Flagged Messages: <span id="flaggedCount">0</span>
-</div>
-
-<div id="all" class="grid"></div>
-<div id="flagged" class="grid" style="display:none;"></div>
-
-<div class="pagination" id="pagination"></div>
+<!-- HACKER POPUP -->
 <div id="hackerPopup">POPUP</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import UAParser from "https://cdn.jsdelivr.net/npm/ua-parser-js@1.0.37/+esm";
-import FingerprintJS from "https://openfpcdn.io/fingerprintjs/v4";
 
 // FIREBASE CONFIG
 const firebaseConfig = {
@@ -86,151 +53,64 @@ const firebaseConfig = {
   appId: "1:1033254869246:web:9134daa1fe90389109adaf"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
 
-// CONSTANTS
+// Replace this with your real Admin UID
 const ADMIN_UID = "iAveVcNJAeWzK9mjUsyhkEaHTSg1";
 
-// ELEMENTS
 const passPopup = document.getElementById("passPopup");
 const adminPass = document.getElementById("adminPass");
 const enterBtn = document.getElementById("enterBtn");
-const allGrid = document.getElementById("all");
-const flaggedGrid = document.getElementById("flagged");
 const hackerPopup = document.getElementById("hackerPopup");
-const searchInput = document.getElementById("searchInput");
-const totalCountEl = document.getElementById("totalCount");
-const flaggedCountEl = document.getElementById("flaggedCount");
-const paginationEl = document.getElementById("pagination");
 
-let allMessages = [];
-let flaggedMessages = [];
-let currentPage = 1;
-const pageSize = 10;
-let activeTab = 'all';
-
-// POPUPS
 function showPopup(msg, color="rgba(0,255,0,0.9)", duration=2500){
   hackerPopup.textContent = msg;
   hackerPopup.style.background = color;
   hackerPopup.style.opacity = "1";
   hackerPopup.style.pointerEvents = "auto";
-  setTimeout(()=>{ hackerPopup.style.opacity="0"; hackerPopup.style.pointerEvents="none"; }, duration);
+  setTimeout(()=>{
+    hackerPopup.style.opacity="0";
+    hackerPopup.style.pointerEvents="none";
+  }, duration);
 }
 
-function confirmPopup(msg, color="rgba(255,165,0,0.9)", duration=5000){
-  return new Promise(resolve=>{
-    hackerPopup.textContent = msg + " (Click to confirm)";
-    hackerPopup.style.background = color;
-    hackerPopup.style.opacity = "1";
-    hackerPopup.style.pointerEvents = "auto";
-    function onClick(){ hackerPopup.style.opacity="0"; hackerPopup.style.pointerEvents="none"; hackerPopup.removeEventListener("click", onClick); resolve(true); }
-    hackerPopup.addEventListener("click", onClick);
-    setTimeout(()=>{ hackerPopup.style.opacity="0"; hackerPopup.style.pointerEvents="none"; hackerPopup.removeEventListener("click", onClick); resolve(false); }, duration);
-  });
-}
-
-// LOGIN
 async function loginAdmin(){
-  const password = adminPass.value;
-  const email = "newannimsitha3@gmail.com";
-  try{
-    const userCredential = await signInWithEmailAndPassword(auth,email,password);
+  const password = adminPass.value.trim();
+  const email = "newannimsitha3@gmail.com"; // admin email
+
+  if(!password){
+    showPopup("Enter password!", "rgba(255,0,0,0.9)");
+    return;
+  }
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
     if(user.uid !== ADMIN_UID){
-      showPopup("ACCESS DENIED","rgba(255,0,0,0.9)");
+      showPopup("ACCESS DENIED", "rgba(255,0,0,0.9)");
       return;
     }
-    passPopup.style.display="none";
-    document.querySelectorAll('body > *:not(#passPopup)').forEach(el=>el.style.display='');
-    showPopup("ACCESS GRANTED","rgba(0,255,0,0.9)");
-    initializePanel();
-  }catch(err){
+
+    showPopup("ACCESS GRANTED", "rgba(0,255,0,0.9)");
+    passPopup.style.display = "none";
+
+  } catch(err) {
     console.error(err);
-    showPopup("ACCESS DENIED","rgba(255,0,0,0.9)");
+    showPopup("ACCESS DENIED", "rgba(255,0,0,0.9)");
   }
 }
 
+// Button click
 enterBtn.addEventListener("click", loginAdmin);
-adminPass.addEventListener("keypress", function(e){ if(e.key==="Enter") loginAdmin(); });
 
-// TAB SWITCHING
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    activeTab = tab.dataset.tab;
-    currentPage = 1;
-    renderMessages();
-  });
-});
-
-// SEARCH
-searchInput.addEventListener('input', ()=>{
-  currentPage = 1;
-  renderMessages();
-});
-
-// PAGINATION
-function paginate(array, page){ const start=(page-1)*pageSize; return array.slice(start,start+pageSize); }
-function renderPagination(totalPages){
-  paginationEl.innerHTML="";
-  for(let i=1;i<=totalPages;i++){
-    const btn = document.createElement("div");
-    btn.className="page-btn"+(i===currentPage?" active":"");
-    btn.textContent=i;
-    btn.addEventListener("click",()=>{ currentPage=i; renderMessages(); });
-    paginationEl.appendChild(btn);
+// Press Enter key to login
+adminPass.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    loginAdmin();
   }
-}
-
-// CREATE CARD
-function createCard(data, flagged=false){
-  const card=document.createElement("div"); card.className="card";
-  const nameInput=document.createElement("input"); nameInput.value=data.name||"Anonymous";
-  const msgArea=document.createElement("textarea"); msgArea.value=data.message||"";
-  const ipEl=document.createElement("small"); ipEl.textContent="IP: "+(data.ip||"Unknown");
-  const locEl=document.createElement("small"); locEl.textContent="Location: "+(data.city||"")+" "+(data.region||"")+" "+(data.country||"")+" | ISP: "+(data.isp||"");
-  const deviceEl=document.createElement("small"); deviceEl.textContent="Device: "+(data.deviceType||"")+" "+(data.deviceModel||"")+" ("+(data.deviceVendor||"")+")";
-  const osEl=document.createElement("small"); osEl.textContent="OS: "+(data.os||"")+" | Browser: "+(data.browser||"");
-  const screenEl=document.createElement("small"); screenEl.textContent="Screen: "+(data.screen||"")+" | CPU: "+(data.cpu||"")+" | Lang: "+(data.language||"");
-  const fpEl=document.createElement("small"); fpEl.textContent="Fingerprint: "+(data.fingerprint||"");
-  const dateInput=document.createElement("input"); dateInput.value=data.date||"";
-  card.append(nameInput,msgArea,ipEl,locEl,deviceEl,osEl,screenEl,fpEl,dateInput);
-  const saveBtn=document.createElement("button"); saveBtn.className="save"; saveBtn.textContent="Save";
-  saveBtn.onclick=async ()=>{ await updateDoc(doc(db,"messages",data.id),{ name:nameInput.value, message:msgArea.value, date:dateInput.value }); showPopup("Message Updated!"); };
-  const delBtn=document.createElement("button"); delBtn.className="delete"; delBtn.textContent="Delete";
-  delBtn.onclick=async ()=>{ const confirmed=await confirmPopup("Delete this message?"); if(confirmed){ await deleteDoc(doc(db,flagged?"flaggedMessages":"messages",data.id)); showPopup("Message Deleted!","rgba(255,0,0,0.9)"); } else showPopup("Delete Cancelled","rgba(100,100,100,0.9)"); };
-  const approveBtn=document.createElement("button"); approveBtn.className="approve"; approveBtn.textContent="Approve";
-  approveBtn.onclick=async ()=>{ if(!flagged) return; const confirmed=await confirmPopup("Approve this flagged message?"); if(confirmed){ await addDoc(collection(db,"messages"),data); await deleteDoc(doc(db,"flaggedMessages",data.id)); showPopup("Message Approved!","rgba(0,255,0,0.9)"); } else showPopup("Approval Cancelled","rgba(100,100,100,0.9)"); };
-  if(flagged) card.append(approveBtn);
-  card.append(saveBtn,delBtn);
-  return card;
-}
-
-// RENDER MESSAGES
-function renderMessages(){
-  let messages = activeTab==="all"? allMessages : flaggedMessages;
-  const searchTerm = searchInput.value.toLowerCase();
-  if(searchTerm) messages = messages.filter(m=>m.message.toLowerCase().includes(searchTerm) || (m.name && m.name.toLowerCase().includes(searchTerm)));
-  const totalPages = Math.ceil(messages.length/pageSize);
-  renderPagination(totalPages);
-  const paged = paginate(messages,currentPage);
-  const container = activeTab==="all"? allGrid : flaggedGrid;
-  container.innerHTML="";
-  paged.forEach(m=>container.appendChild(createCard(m,activeTab==="flagged")));
-  totalCountEl.textContent=allMessages.length;
-  flaggedCountEl.textContent=flaggedMessages.length;
-}
-
-// INITIALIZE PANEL
-async function initializePanel(){
-  const qAll=query(collection(db,"messages"), orderBy("date","desc"));
-  onSnapshot(qAll,snap=>{ allMessages=[]; snap.forEach(docSnap=>allMessages.push({...docSnap.data(),id:docSnap.id})); renderMessages(); });
-  const qFlagged=query(collection(db,"flaggedMessages"), orderBy("date","desc"));
-  onSnapshot(qFlagged,snap=>{ flaggedMessages=[]; snap.forEach(docSnap=>flaggedMessages.push({...docSnap.data(),id:docSnap.id})); renderMessages(); });
-}
+});
 </script>
 </body>
 </html>
