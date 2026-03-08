@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Messages</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🤫</text></svg>">
+
+<style>
+  * { box-sizing: border-box; font-family: Segoe UI, system-ui, sans-serif; margin:0; padding:0; }
+
+  body {
+    padding: 50px 20px;
+    background: linear-gradient(120deg, #dff2ff, #b5ddff, #8bc7ff, #6fb7ff);
+    background-size: 300% 300%;
+    animation: bgmove 15s ease infinite;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  @keyframes bgmove {
+    0% { background-position:0% 50%; }
+    50% { background-position:100% 50%; }
+    100% { background-position:0% 50%; }
+  }
+
+  h1 {
+    text-align: center;
+    color: #0b5fb3;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .subtitle {
+    text-align: center;
+    opacity: 0.7;
+    margin-bottom: 30px;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: #0b5fb3;
+    font-weight: 600;
+  }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1150px; 
+    margin: auto;
+    padding: 10px;
+  }
+
+  .card {
+    width: 350px;        
+    height: 180px;       
+    perspective: 1000px;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .card-back {
+    transform: rotateY(180deg);
+    overflow-y: auto;
+  }
+
+  .name { font-weight: bold; color: #0a4e9c; margin-bottom: 4px; font-size: 16px; }
+  .date { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+  .message { font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; transition: all 0.3s; }
+  .card:hover .message { -webkit-line-clamp: 7; }
+
+  .empty {
+    text-align: center;
+    opacity: 0.7;
+    width: 100%;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+
+  .emoji {
+    position: fixed;
+    bottom: -50px;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1000;
+    animation-name: floatUp;
+    animation-timing-function: linear;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+  }
+
+  
+  @media (max-width: 1080px){ .card { width: 45%; height: 180px; } }
+  @media (max-width: 700px){ .card { width: 90%; height: 180px; } }
+</style>
+</head>
+
+<body>
+<a class="back" href="index.html">← Back</a>
+<h1>Secret Messages</h1>
+<div class="subtitle" id="count">Loading messages...</div>
+<div class="grid" id="grid"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBorukwZKOeJaxEYqY57zL1W-8zjevQlhg",
+  authDomain: "messages-9e5da.firebaseapp.com",
+  projectId: "messages-9e5da",
+  storageBucket: "messages-9e5da.appspot.com",
+  messagingSenderId: "1033254869246",
+  appId: "1:1033254869246:web:9134daa1fe90389109adaf"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const grid = document.getElementById("grid");
+const count = document.getElementById("count");
+
+function formatTimestamp(ts) {
+  if(!ts) return "";
+  const date = ts.toDate ? ts.toDate() : new Date(ts);
+  const day = date.getDate();
+  const month = date.toLocaleString('en-US',{month:'short'});
+  const hours = date.getHours().toString().padStart(2,'0');
+  const minutes = date.getMinutes().toString().padStart(2,'0');
+  return `${day} ${month}, ${hours}:${minutes}`;
+}
+
+const q = query(collection(db,"messages"), orderBy("date","desc"), limit(100));
+
+onSnapshot(q, snapshot => {
+  grid.innerHTML = "";
+
+  if(snapshot.empty){
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No messages yet 🤫";
+    grid.appendChild(empty);
+    count.textContent = "0 Anonymous messages";
+    return;
+  }
+
+  count.textContent = snapshot.size + " Anonymous messages";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const inner = document.createElement("div");
+    inner.className = "card-inner";
+
+    // Front
+    const front = document.createElement("div");
+    front.className = "card-front";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = data.name || "Anonymous";
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "date";
+    dateDiv.textContent = formatTimestamp(data.date);
+    const message = document.createElement("div");
+    message.className = "message";
+    message.textContent = data.message || "";
+    front.appendChild(name);
+    front.appendChild(dateDiv);
+    front.appendChild(message);
+
+    // Back
+    const back = document.createElement("div");
+    back.className = "card-back";
+    const fullMsg = document.createElement("div");
+    fullMsg.style.fontSize = "16px";
+    fullMsg.style.lineHeight = "1.6";
+    fullMsg.textContent = data.message || "";
+    back.appendChild(fullMsg);
+
+    // Sparkle emoji
+    const emoji = document.createElement("div");
+    emoji.textContent = "✨";
+    emoji.style.position = "absolute";
+    emoji.style.top = "10px";
+    emoji.style.right = "12px";
+    emoji.style.fontSize = "16px";
+    emoji.style.opacity = "0.6";
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    card.appendChild(inner);
+    card.appendChild(emoji);
+
+
+    card.addEventListener("click", () => card.classList.toggle("flipped"));
+
+    grid.appendChild(card);
+  });
+});
+
+
+function spawnEmoji(){
+  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭"];
+  const emojiEl = document.createElement("div");
+  emojiEl.className = "emoji";
+  emojiEl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+  const size = Math.random()*20 + 20;
+  emojiEl.style.fontSize = size + "px";
+  emojiEl.style.left = Math.random() * (window.innerWidth - size) + "px";
+  emojiEl.style.animationDuration = (Math.random()*4 + 4) + "s";
+
+  document.body.appendChild(emojiEl);
+
+  emojiEl.addEventListener("animationend", () => emojiEl.remove());
+}
+
+setInterval(spawnEmoji, 500);
+</script>
+</body>
+</html>

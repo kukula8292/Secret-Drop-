@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Drop</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🤫</text></svg>">
+<style>
+* { box-sizing: border-box; font-family: Segoe UI, system-ui, sans-serif; margin:0; padding:0; }
+
+body {
+  height:100vh; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center;
+  background: linear-gradient(120deg,#dff2ff,#b5ddff,#8bc7ff,#6fb7ff);
+  background-size:300% 300%; 
+  animation:bgmove 12s ease infinite; 
+  overflow:hidden; 
+  position:relative;
+}
+
+@keyframes bgmove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.card{
+  width: 420px;
+  max-width: 90%;
+  padding: 40px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+  text-align:center;
+  transition:0.3s;
+  position:relative;
+  z-index:10;
+}
+
+.card:hover{
+  transform: translateY(-6px) scale(1.01);
+}
+
+h1{
+  margin-top:0;
+  font-size:28px;
+  color:#0b5fb3;
+}
+
+p{
+  opacity:0.75;
+  margin-bottom: 16px;
+}
+
+input, textarea{
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.08);
+  font-size: 14px;
+}
+
+textarea{
+  resize:none;
+  height:120px;
+}
+
+button{
+  margin-top:16px;
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:bold;
+  background: linear-gradient(135deg,#4cb4ff,#0077ff);
+  color:white;
+  cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,0.2);
+  transition:0.25s;
+}
+
+button:hover{
+  transform: translateY(-3px);
+  box-shadow:0 15px 30px rgba(0,0,0,0.25);
+}
+
+.link{
+  margin-top:16px;
+  display:block;
+  font-weight:600;
+  color:#0066cc;
+  text-decoration:none;
+}
+
+.link:hover{
+  text-decoration:underline;
+}
+
+.popup{
+  position:fixed;
+  top:20px; 
+  left:50%; 
+  transform:translateX(-50%);
+  padding:14px 24px; 
+  border-radius:16px; 
+  backdrop-filter: blur(14px); 
+  background: rgba(0, 123, 255, 0.9); 
+  color:white; 
+  font-weight:bold; 
+  box-shadow:0 6px 15px rgba(0,0,0,0.2); 
+  opacity:0; 
+  pointer-events:none; 
+  transition:0.4s; 
+  z-index:9999; 
+}
+
+.popup.show{
+  opacity:1; 
+  pointer-events:auto;
+}
+
+.emoji {
+  position:absolute;
+  font-size:24px;
+  user-select:none;
+  pointer-events:none;
+  animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.8); opacity:0; }
+  10% { opacity:1; }
+  100% { transform: translateY(-50px) scale(1); opacity:0; }
+}
+
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  input, textarea {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  textarea {
+    height:100px;
+  }
+
+  button {
+    padding:10px;
+    font-size:14px;
+  }
+
+  .emoji {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="popup" id="popup"></div>
+
+<div class="card">
+  <h1>🔐 Secret Drop</h1>
+  <p>Send anonymous messages or secrets.</p>
+
+  <input id="name" placeholder="Nickname (optional)">
+  <textarea id="message" placeholder="Write your message..."></textarea>
+
+  <button id="sendBtn">Send Message</button>
+  <a class="link" href="gallery.html">View Secret Messages →</a>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBorukwZKOeJaxEYqY57zL1W-8zjevQlhg",
+  authDomain: "messages-9e5da.firebaseapp.com",
+  projectId: "messages-9e5da",
+  storageBucket: "messages-9e5da.firebasestorage.app",
+  messagingSenderId: "1033254869246",
+  appId: "1:1033254869246:web:9134daa1fe90389109adaf"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const popup = document.getElementById("popup");
+
+const badWords = ["shit","fuck","bitch","asshole","dick","crap","piss"];
+
+function showPopup(msg, color="#007BFF"){
+  popup.textContent = msg;
+  popup.style.background = color;
+  popup.classList.add("show");
+  setTimeout(()=>popup.classList.remove("show"), 2500);
+}
+
+function containsBadWord(message){
+  const lower = message.toLowerCase();
+  return badWords.some(word => lower.includes(word));
+}
+
+async function send(){
+  const name = document.getElementById("name").value || "Anonymous";
+  const message = document.getElementById("message").value.trim();
+  const sendBtn = document.getElementById("sendBtn");
+
+  if(!message){
+    showPopup("Please write a message!", "rgba(220,50,50,0.9)");
+    return;
+  }
+
+  sendBtn.disabled = true;
+
+  try{
+    if(containsBadWord(message)){
+      await addDoc(collection(db,"flaggedMessages"),{
+        name,
+        message,
+        date: serverTimestamp(),
+        ip: "Unknown",
+        device: navigator.userAgent
+      });
+      showPopup("Message sent for admin approval!", "orange");
+    } else {
+      await addDoc(collection(db,"messages"),{
+        name,
+        message,
+        date: serverTimestamp(),
+        ip: "Unknown",
+        device: navigator.userAgent
+      });
+      showPopup("Message sent successfully!", "#007BFF");
+    }
+
+    document.getElementById("name").value = "";
+    document.getElementById("message").value = "";
+
+  } catch(err){
+    console.error(err);
+    showPopup("Failed to send message!", "rgba(220,50,50,0.9)");
+  }
+
+  sendBtn.disabled = false;
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("sendBtn").addEventListener("click", send);
+  document.getElementById("message").addEventListener("keydown", e=>{
+    if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+  });
+
+  setTimeout(()=>{ setInterval(spawnEmoji, 100); }, 200);
+});
+
+function spawnEmoji(){
+  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭"];
+  const emojiEl = document.createElement("div");
+  emojiEl.className = "emoji";
+  emojiEl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  const size = Math.random() * 20 + 20;
+  emojiEl.style.fontSize = size + "px";
+  emojiEl.style.left = Math.random() * window.innerWidth + "px";
+  emojiEl.style.animationDuration = (Math.random()*4 + 4) + "s";
+  document.body.appendChild(emojiEl);
+
+  setTimeout(()=>emojiEl.remove(), 6000);
+}
+</script>
+</body>
+</html>
