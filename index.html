@@ -6,168 +6,226 @@
 <title>Secret Drop</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🤫</text></svg>">
 <style>
-* { box-sizing: border-box; font-family: Segoe UI, system-ui, sans-serif; margin:0; padding:0; }
+* { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+
+:root {
+  --primary: #4cb4ff;
+  --primary-dark: #0077ff;
+  --accent: #0b5fb3;
+  --text: #fff;
+}
 
 body {
-  height:100vh; 
-  display:flex; 
-  justify-content:center; 
-  align-items:center;
-  background: linear-gradient(120deg,#dff2ff,#b5ddff,#8bc7ff,#6fb7ff);
-  background-size:300% 300%; 
-  animation:bgmove 12s ease infinite; 
-  overflow:hidden; 
-  position:relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  overflow: hidden;
+  position: relative;
+  font-weight: 500;
 }
 
-@keyframes bgmove{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.card{
-  width: 420px;
+.card {
+  width: 450px;
   max-width: 90%;
-  padding: 40px;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(14px);
-  border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
-  text-align:center;
-  transition:0.3s;
-  position:relative;
-  z-index:10;
+  padding: 50px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.8);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 10;
+  border: 2px solid rgba(255,255,255,0.4);
 }
 
-.card:hover{
-  transform: translateY(-6px) scale(1.01);
+.card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
-h1{
-  margin-top:0;
-  font-size:28px;
-  color:#0b5fb3;
+h1 {
+  margin-top: 0;
+  font-size: 32px;
+  color: var(--accent);
+  margin-bottom: 12px;
+  animation: slideDown 0.8s ease;
 }
 
-p{
-  opacity:0.75;
-  margin-bottom: 16px;
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-input, textarea{
-  width:100%;
-  margin-top:12px;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: inset 0 3px 6px rgba(0,0,0,0.08);
+p {
+  opacity: 0.75;
+  margin-bottom: 24px;
+  font-size: 15px;
+  animation: fadeIn 1s ease 0.2s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+input, textarea {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.97);
   font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
 }
 
-textarea{
-  resize:none;
-  height:120px;
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(76, 180, 255, 0.1);
+  transform: translateY(-2px);
 }
 
-button{
-  margin-top:16px;
-  width:100%;
-  padding:13px;
-  border:none;
-  border-radius:12px;
-  font-size:15px;
-  font-weight:bold;
-  background: linear-gradient(135deg,#4cb4ff,#0077ff);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
-  transition:0.25s;
+textarea {
+  resize: none;
+  height: 130px;
 }
 
-button:hover{
-  transform: translateY(-3px);
-  box-shadow:0 15px 30px rgba(0,0,0,0.25);
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0,119,255,0.4);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.link{
-  margin-top:16px;
-  display:block;
-  font-weight:600;
-  color:#0066cc;
-  text-decoration:none;
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
-.link:hover{
-  text-decoration:underline;
+button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
-.popup{
-  position:fixed;
-  top:20px; 
-  left:50%; 
-  transform:translateX(-50%);
-  padding:14px 24px; 
-  border-radius:16px; 
-  backdrop-filter: blur(14px); 
-  background: rgba(0, 123, 255, 0.9); 
-  color:white; 
-  font-weight:bold; 
-  box-shadow:0 6px 15px rgba(0,0,0,0.2); 
-  opacity:0; 
-  pointer-events:none; 
-  transition:0.4s; 
-  z-index:9999; 
+button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 45px rgba(0,119,255,0.5);
 }
 
-.popup.show{
-  opacity:1; 
-  pointer-events:auto;
+button:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.link {
+  margin-top: 20px;
+  display: block;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+.popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  padding: 16px 28px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(0, 123, 255, 0.95);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 9999;
+}
+
+.popup.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 
 .emoji {
-  position:absolute;
-  font-size:24px;
-  user-select:none;
-  pointer-events:none;
-  animation: floatUp linear forwards;
+  position: absolute;
+  font-size: 28px;
+  user-select: none;
+  pointer-events: none;
+  animation: floatUp 5s linear forwards;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 @keyframes floatUp {
-  0% { transform: translateY(100vh) scale(0.8); opacity:0; }
-  10% { opacity:1; }
-  100% { transform: translateY(-50px) scale(1); opacity:0; }
+  0% { transform: translateY(100vh) scale(0.5) rotateZ(0deg); opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { transform: translateY(-100vh) scale(1) rotateZ(360deg); opacity: 0; }
 }
-
 
 @media (max-width: 480px) {
   .card {
-    padding: 20px;
-    border-radius: 16px;
+    padding: 30px 20px;
+    border-radius: 20px;
   }
-
-  h1 {
-    font-size: 22px;
-  }
-
+  h1 { font-size: 24px; }
   input, textarea {
-    padding: 10px;
+    padding: 12px;
     font-size: 13px;
+    margin-top: 12px;
   }
-
-  textarea {
-    height:100px;
-  }
-
-  button {
-    padding:10px;
-    font-size:14px;
-  }
-
-  .emoji {
-    font-size: 16px !important;
-  }
+  textarea { height: 110px; }
+  button { padding: 13px; font-size: 14px; }
+  .emoji { font-size: 20px; }
 }
 </style>
 </head>
@@ -177,13 +235,13 @@ button:hover{
 
 <div class="card">
   <h1>🔐 Secret Drop</h1>
-  <p>Send anonymous messages or secrets.</p>
+  <p>Send anonymous messages or secrets safely.</p>
 
-  <input id="name" placeholder="Nickname (optional)">
-  <textarea id="message" placeholder="Write your message..."></textarea>
+  <input id="name" placeholder="Nickname (optional)" type="text" maxlength="50">
+  <textarea id="message" placeholder="Write your message..." maxlength="500"></textarea>
 
-  <button id="sendBtn">Send Message</button>
-  <a class="link" href="gallery.html">View Secret Messages →</a>
+  <button id="sendBtn">✨ Send Message</button>
+  <a class="link" href="gallery.html">👀 View Secret Messages →</a>
 </div>
 
 <script type="module">
@@ -202,86 +260,83 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const popup = document.getElementById("popup");
-
 const badWords = ["shit","fuck","bitch","asshole","dick","crap","piss"];
 
-function showPopup(msg, color="#007BFF"){
+function showPopup(msg, color="#007BFF") {
   popup.textContent = msg;
   popup.style.background = color;
   popup.classList.add("show");
-  setTimeout(()=>popup.classList.remove("show"), 2500);
+  setTimeout(()=>popup.classList.remove("show"), 3000);
 }
 
-function containsBadWord(message){
+function containsBadWord(message) {
   const lower = message.toLowerCase();
   return badWords.some(word => lower.includes(word));
 }
 
-async function send(){
-  const name = document.getElementById("name").value || "Anonymous";
+async function send() {
+  const name = document.getElementById("name").value.trim() || "Anonymous";
   const message = document.getElementById("message").value.trim();
   const sendBtn = document.getElementById("sendBtn");
 
-  if(!message){
-    showPopup("Please write a message!", "rgba(220,50,50,0.9)");
+  if(!message) {
+    showPopup("⚠️ Please write a message!", "rgba(220,50,50,0.9)");
     return;
   }
 
   sendBtn.disabled = true;
+  sendBtn.style.opacity = "0.6";
 
-  try{
-    if(containsBadWord(message)){
-      await addDoc(collection(db,"flaggedMessages"),{
-        name,
-        message,
-        date: serverTimestamp(),
-        ip: "Unknown",
-        device: navigator.userAgent
+  try {
+    if(containsBadWord(message)) {
+      await addDoc(collection(db,"flaggedMessages"), {
+        name, message, date: serverTimestamp(),
+        ip: "Unknown", device: navigator.userAgent
       });
-      showPopup("Message sent for admin approval!", "orange");
+      showPopup("⏳ Message sent for admin approval!", "#FFA500");
     } else {
-      await addDoc(collection(db,"messages"),{
-        name,
-        message,
-        date: serverTimestamp(),
-        ip: "Unknown",
-        device: navigator.userAgent
+      await addDoc(collection(db,"messages"), {
+        name, message, date: serverTimestamp(),
+        ip: "Unknown", device: navigator.userAgent
       });
-      showPopup("Message sent successfully!", "#007BFF");
+      showPopup("✅ Message sent successfully!", "#28a745");
+      spawnEmojiConfetti();
     }
-
     document.getElementById("name").value = "";
     document.getElementById("message").value = "";
-
-  } catch(err){
+  } catch(err) {
     console.error(err);
-    showPopup("Failed to send message!", "rgba(220,50,50,0.9)");
+    showPopup("❌ Failed to send message!", "rgba(220,50,50,0.9)");
   }
-
   sendBtn.disabled = false;
+  sendBtn.style.opacity = "1";
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("sendBtn").addEventListener("click", send);
-  document.getElementById("message").addEventListener("keydown", e=>{
-    if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+  document.getElementById("message").addEventListener("keydown", e => {
+    if(e.key === "Enter" && e.ctrlKey) send();
   });
-
-  setTimeout(()=>{ setInterval(spawnEmoji, 100); }, 200);
+  setTimeout(() => { setInterval(spawnEmoji, 150); }, 300);
 });
 
-function spawnEmoji(){
-  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭"];
+function spawnEmoji() {
+  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭","✨","💎","🔐"];
   const emojiEl = document.createElement("div");
   emojiEl.className = "emoji";
   emojiEl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-  const size = Math.random() * 20 + 20;
+  const size = Math.random() * 18 + 16;
   emojiEl.style.fontSize = size + "px";
   emojiEl.style.left = Math.random() * window.innerWidth + "px";
-  emojiEl.style.animationDuration = (Math.random()*4 + 4) + "s";
+  emojiEl.style.animationDuration = (Math.random()*2 + 4) + "s";
   document.body.appendChild(emojiEl);
+  setTimeout(() => emojiEl.remove(), 6000);
+}
 
-  setTimeout(()=>emojiEl.remove(), 6000);
+function spawnEmojiConfetti() {
+  for(let i = 0; i < 20; i++) {
+    setTimeout(() => spawnEmoji(), i * 30);
+  }
 }
 </script>
 </body>
