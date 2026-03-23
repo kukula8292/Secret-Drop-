@@ -5,19 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Secret Messages</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🤫</text></svg>">
-
+<link rel="stylesheet" href="styles.css">
 <style>
-* { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
-
-body {
-  padding: 50px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
+.light-mode { padding: 50px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%); background-size: 400% 400%; animation: gradientShift 15s ease infinite; min-height: 100vh; overflow-x: hidden; position: relative; }
 
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
@@ -25,18 +15,47 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-h1 {
-  text-align: center;
-  color: white;
-  margin-bottom: 8px;
-  text-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  font-size: 36px;
-  animation: slideDown 0.8s ease;
-}
+h1 { text-align: center; color: white; margin-bottom: 8px; text-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 36px; animation: slideDown 0.8s ease; }
 
 @keyframes slideDown {
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+.header-controls {
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
+}
+
+.back:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateX(-5px);
+}
+
+.search-box {
+  width: 250px;
+  max-width: 90%;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.9);
+  font-size: 14px;
+  color: #333;
 }
 
 .subtitle {
@@ -51,23 +70,6 @@ h1 {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-.back {
-  display: inline-block;
-  margin-bottom: 20px;
-  text-decoration: none;
-  color: white;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  padding: 8px 16px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.15);
-}
-
-.back:hover {
-  background: rgba(255,255,255,0.25);
-  transform: translateX(-5px);
 }
 
 .grid {
@@ -86,6 +88,7 @@ h1 {
   perspective: 1000px;
   cursor: pointer;
   animation: scaleIn 0.6s ease;
+  position: relative;
 }
 
 @keyframes scaleIn {
@@ -131,81 +134,79 @@ h1 {
   overflow-y: auto;
 }
 
-.name {
-  font-weight: 700;
-  color: #0b5fb3;
-  margin-bottom: 6px;
-  font-size: 16px;
-}
+.name { font-weight: 700; color: #0b5fb3; margin-bottom: 6px; font-size: 16px; }
 
-.date {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 10px;
-}
+.date { font-size: 12px; opacity: 0.7; margin-bottom: 10px; }
 
-.message {
-  font-size: 14px;
-  line-height: 1.6;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  transition: all 0.3s ease;
-  color: #333;
-}
+.message { font-size: 14px; line-height: 1.6; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; transition: all 0.3s ease; color: #333; }
 
-.card:hover .message {
-  -webkit-line-clamp: 7;
-}
+.card:hover .message { -webkit-line-clamp: 7; }
 
-.empty {
-  text-align: center;
-  opacity: 0.9;
-  width: 100%;
-  font-size: 18px;
+.card-actions {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  color: white;
-  font-weight: 600;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
-.emoji {
-  position: fixed;
-  bottom: -50px;
-  pointer-events: none;
-  user-select: none;
-  z-index: 1000;
-  animation: floatUp 6s linear forwards;
-  font-size: 24px;
+.card-actions button {
+  padding: 6px 12px;
+  font-size: 12px;
+  flex: 1;
+  min-width: 80px;
 }
+
+.empty { text-align: center; opacity: 0.9; width: 100%; font-size: 18px; display: flex; justify-content: center; align-items: center; height: 200px; color: white; font-weight: 600; }
+
+.emoji { position: fixed; bottom: -50px; pointer-events: none; user-select: none; z-index: 1000; animation: floatUp 6s linear forwards; font-size: 24px; }
 
 @keyframes floatUp {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
 }
 
+.loading-skeleton {
+  width: 350px;
+  height: 200px;
+  border-radius: 24px;
+  animation: loading 1.5s infinite;
+  margin: 12px;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 @media (max-width: 1080px) {
   .card { width: 45%; height: 200px; }
+  .loading-skeleton { width: 45%; }
 }
 
 @media (max-width: 700px) {
   .card { width: 90%; height: 200px; }
+  .loading-skeleton { width: 90%; }
   h1 { font-size: 28px; }
+  .header-controls { flex-direction: column; }
+  .search-box { width: 100%; }
 }
 </style>
 </head>
 
-<body>
-<a class="back" href="index.html">← Back</a>
+<body class="light-mode">
+
+<div class="header-controls">
+  <a class="back" href="index.html">← Back</a>
+  <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search messages...">
+</div>
+
 <h1>🎭 Secret Messages</h1>
 <div class="subtitle" id="count">Loading messages...</div>
 <div class="grid" id="grid"></div>
 
+<script src="utils.js" type="module"></script>
 <script type="module">
+import { toast } from './utils.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -222,6 +223,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const grid = document.getElementById("grid");
 const count = document.getElementById("count");
+const searchInput = document.getElementById("searchInput");
+
+let allMessages = [];
 
 function formatTimestamp(ts) {
   if(!ts) return "";
@@ -233,24 +237,18 @@ function formatTimestamp(ts) {
   return `${day} ${month}, ${hours}:${minutes}`;
 }
 
-const q = query(collection(db, "messages"), orderBy("date", "desc"), limit(100));
-
-onSnapshot(q, snapshot => {
+function renderMessages(messages) {
   grid.innerHTML = "";
 
-  if(snapshot.empty) {
+  if(messages.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty";
-    empty.textContent = "No messages yet 🤫";
+    empty.textContent = "No messages found 🤫";
     grid.appendChild(empty);
-    count.textContent = "0 Anonymous messages";
     return;
   }
 
-  count.textContent = snapshot.size + " Anonymous messages";
-
-  snapshot.forEach((doc, index) => {
-    const data = doc.data();
+  messages.forEach((data, index) => {
     const card = document.createElement("div");
     card.className = "card";
     card.style.animation = `scaleIn 0.6s ease ${index * 0.05}s both`;
@@ -260,27 +258,20 @@ onSnapshot(q, snapshot => {
 
     const front = document.createElement("div");
     front.className = "card-front";
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = data.name || "Anonymous";
-    const dateDiv = document.createElement("div");
-    dateDiv.className = "date";
-    dateDiv.textContent = formatTimestamp(data.date);
-    const message = document.createElement("div");
-    message.className = "message";
-    message.textContent = data.message || "";
-    front.appendChild(name);
-    front.appendChild(dateDiv);
-    front.appendChild(message);
+    front.innerHTML = `
+      <div class="name">👤 ${data.name || "Anonymous"}</div>
+      <div class="date">🕐 ${formatTimestamp(data.date)}</div>
+      <div class="message">${data.message || ""}</div>
+    `;
 
     const back = document.createElement("div");
     back.className = "card-back";
-    const fullMsg = document.createElement("div");
-    fullMsg.style.fontSize = "16px";
-    fullMsg.style.lineHeight = "1.8";
-    fullMsg.style.color = "#333";
-    fullMsg.textContent = data.message || "";
-    back.appendChild(fullMsg);
+    back.innerHTML = `
+      <div style="font-size: 16px; line-height: 1.8; color: #333;">${data.message || ""}</div>
+      <div style="margin-top: auto; font-size: 12px; opacity: 0.6; color: #666;">
+        Sent: ${formatTimestamp(data.date)}
+      </div>
+    `;
 
     const emoji = document.createElement("div");
     emoji.textContent = "✨";
@@ -295,11 +286,44 @@ onSnapshot(q, snapshot => {
     card.appendChild(inner);
     card.appendChild(emoji);
 
-    card.addEventListener("click", () => card.classList.toggle("flipped"));
+    const actions = document.createElement("div");
+    actions.className = "card-actions";
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "📋 Copy";
+    copyBtn.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(data.message);
+      toast.success("Copied!");
+    };
+    actions.appendChild(copyBtn);
+    card.appendChild(actions);
 
+    card.addEventListener("click", () => card.classList.toggle("flipped"));
     grid.appendChild(card);
   });
+}
+
+function filterMessages() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const filtered = allMessages.filter(msg =>
+    msg.message.toLowerCase().includes(searchTerm) ||
+    (msg.name || "Anonymous").toLowerCase().includes(searchTerm)
+  );
+  renderMessages(filtered);
+}
+
+const q = query(collection(db, "messages"), orderBy("date", "desc"), limit(100));
+
+onSnapshot(q, snapshot => {
+  allMessages = snapshot.docs.map(doc => doc.data());
+  count.textContent = `${allMessages.length} Anonymous messages`;
+  filterMessages();
+}, error => {
+  console.error("Error loading messages:", error);
+  toast.error("Failed to load messages");
 });
+
+searchInput.addEventListener("input", filterMessages);
 
 function spawnEmoji() {
   const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭","💬","💎"];
