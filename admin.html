@@ -5,20 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Control</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🥷</text></svg>">
+<link rel="stylesheet" href="styles.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Fira Code', monospace; }
+.dark-mode { background: #0a0e27; color: #00ff00; padding: 40px; overflow-x: hidden; position: relative; font-family: 'Fira Code', monospace; }
 
-body {
-  background: #0a0e27;
-  color: #00ff00;
-  padding: 40px;
-  overflow-x: hidden;
-  position: relative;
-}
-
-body::before {
+.dark-mode::before {
   content: "";
   position: fixed;
   top: 0;
@@ -30,7 +23,7 @@ body::before {
   pointer-events: none;
 }
 
-body::after {
+.dark-mode::after {
   content: "";
   position: fixed;
   top: 0;
@@ -56,6 +49,8 @@ h1 {
   margin-bottom: 30px;
   text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff0080;
   animation: glow 2s ease-in-out infinite;
+  position: relative;
+  z-index: 10;
 }
 
 @keyframes glow {
@@ -69,6 +64,8 @@ h1 {
   gap: 20px;
   margin-bottom: 30px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 }
 
 .tab {
@@ -103,6 +100,8 @@ h1 {
   gap: 15px;
   margin-bottom: 30px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 }
 
 .search-bar input {
@@ -146,6 +145,8 @@ h1 {
   border: 1px solid #00ff0055;
   border-radius: 10px;
   box-shadow: 0 0 20px #00ff0020;
+  position: relative;
+  z-index: 10;
 }
 
 .grid {
@@ -153,6 +154,8 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
   margin-bottom: 40px;
+  position: relative;
+  z-index: 10;
 }
 
 .card {
@@ -183,31 +186,13 @@ h1 {
   line-height: 1.6;
 }
 
-.name {
-  font-weight: 700;
-  color: #00ff00;
-  margin-bottom: 8px;
-}
+.name { font-weight: 700; color: #00ff00; margin-bottom: 8px; }
 
-.date {
-  opacity: 0.7;
-  font-size: 12px;
-}
+.date { opacity: 0.7; font-size: 12px; }
 
-.message {
-  opacity: 0.85;
-  line-height: 1.5;
-  max-height: 100px;
-  overflow-y: auto;
-}
+.message { opacity: 0.85; line-height: 1.5; max-height: 100px; overflow-y: auto; }
 
-.meta {
-  opacity: 0.6;
-  font-size: 11px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #00ff0033;
-}
+.meta { opacity: 0.6; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #00ff0033; }
 
 button {
   margin-top: 12px;
@@ -235,12 +220,19 @@ button:active {
   transform: scale(0.95);
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .pagination {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 30px;
+  position: relative;
+  z-index: 10;
 }
 
 .page-btn {
@@ -286,6 +278,10 @@ button:active {
   to { opacity: 1; }
 }
 
+#passPopup h1 {
+  margin-bottom: 20px;
+}
+
 #passPopup input {
   padding: 14px;
   border-radius: 10px;
@@ -315,6 +311,7 @@ button:active {
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 15px;
+  margin: 0;
 }
 
 #passPopup button:hover {
@@ -325,8 +322,7 @@ button:active {
 #hackerPopup {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100px);
+  right: 20px;
   padding: 16px 28px;
   border-radius: 12px;
   background: rgba(0, 255, 0, 0.95);
@@ -340,11 +336,16 @@ button:active {
   text-align: center;
   min-width: 220px;
   font-size: 14px;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 #hackerPopup.show {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
   pointer-events: auto;
 }
 
@@ -367,35 +368,21 @@ button:active {
   font-size: 13px;
 }
 
-.chart b {
-  color: #00ff00;
-}
+.chart b { color: #00ff00; }
 
-.chart hr {
-  border: none;
-  border-top: 1px solid #00ff0055;
-  margin: 12px 0;
-}
+.chart hr { border: none; border-top: 1px solid #00ff0055; margin: 12px 0; }
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .tabs {
-    flex-direction: column;
-    align-items: center;
-  }
-  .tab {
-    width: 100%;
-  }
-  #passPopup input {
-    width: 85vw;
-  }
+  .grid { grid-template-columns: 1fr; }
+  .tabs { flex-direction: column; align-items: center; }
+  .tab { width: 100%; }
+  #passPopup input { width: 85vw; }
+  h1 { font-size: 28px; }
 }
 </style>
 </head>
 
-<body>
+<body class="dark-mode">
 
 <div id="passPopup">
   <h1>🔐 ADMIN ACCESS</h1>
@@ -431,7 +418,9 @@ button:active {
 <div class="pagination" id="pagination"></div>
 <div id="hackerPopup"></div>
 
+<script src="utils.js" type="module"></script>
 <script type="module">
+import { toast, rateLimiter } from './utils.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, deleteDoc, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -477,6 +466,11 @@ function showPopup(msg, color = "rgba(0,255,0,0.9)", duration = 2500) {
 }
 
 function loginAdmin() {
+  if(rateLimiter.isLimited()) {
+    toast.error("Too many attempts. Please wait.");
+    return;
+  }
+
   const pw = adminPass.value.trim();
   const hashed = "rama338";
   if(pw === hashed) {
@@ -562,17 +556,21 @@ function renderGrid() {
 
     const buttonDiv = document.createElement("div");
     buttonDiv.style.marginTop = "12px";
+
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️ Edit";
     editBtn.style.background = "#FFA500";
     editBtn.style.color = "#001";
 
-    const approveBtn = document.createElement("button");
-    approveBtn.textContent = "✅ Approve";
-
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️ Delete";
     deleteBtn.style.background = "#FF4444";
+
+    const approveBtn = document.createElement("button");
+    approveBtn.textContent = "✅ Approve";
+
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "📋 Copy";
 
     editBtn.addEventListener("click", () => {
       const newMsg = prompt("Edit message:", m.message);
@@ -585,11 +583,20 @@ function renderGrid() {
       }
     });
 
+    deleteBtn.addEventListener("click", async () => {
+      await deleteDoc(doc(db, activeTab === "all" ? "messages" : "flaggedMessages", m.id));
+      showPopup("🗑️ Message deleted", "rgba(255, 100, 100, 0.9)", 1500);
+    });
+
     approveBtn.addEventListener("click", async () => {
       if(activeTab === "flagged") {
         await addDoc(collection(db, "messages"), {
-          name: m.name, message: m.message, date: m.date,
-          ip: m.ip, userAgent: m.userAgent, geo: m.geo,
+          name: m.name,
+          message: m.message,
+          date: m.date,
+          ip: m.ip,
+          userAgent: m.userAgent,
+          geo: m.geo,
           lastEdited: m.lastEdited || m.date
         });
         await deleteDoc(doc(db, "flaggedMessages", m.id));
@@ -597,11 +604,12 @@ function renderGrid() {
       }
     });
 
-    deleteBtn.addEventListener("click", async () => {
-      await deleteDoc(doc(db, activeTab === "all" ? "messages" : "flaggedMessages", m.id));
-      showPopup("🗑️ Message deleted", "rgba(255, 100, 100, 0.9)", 1500);
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(m.message);
+      toast.success("Copied!");
     });
 
+    buttonDiv.appendChild(copyBtn);
     buttonDiv.appendChild(editBtn);
     if(activeTab === "flagged") buttonDiv.appendChild(approveBtn);
     buttonDiv.appendChild(deleteBtn);
