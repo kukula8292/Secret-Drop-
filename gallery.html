@@ -7,134 +7,201 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='90' font-size='90'>🤫</text></svg>">
 
 <style>
-  * { box-sizing: border-box; font-family: Segoe UI, system-ui, sans-serif; margin:0; padding:0; }
+* { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
 
-  body {
-    padding: 50px 20px;
-    background: linear-gradient(120deg, #dff2ff, #b5ddff, #8bc7ff, #6fb7ff);
-    background-size: 300% 300%;
-    animation: bgmove 15s ease infinite;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
+body {
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
 
-  @keyframes bgmove {
-    0% { background-position:0% 50%; }
-    50% { background-position:100% 50%; }
-    100% { background-position:0% 50%; }
-  }
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-  h1 {
-    text-align: center;
-    color: #0b5fb3;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-  }
+h1 {
+  text-align: center;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  font-size: 36px;
+  animation: slideDown 0.8s ease;
+}
 
-  .subtitle {
-    text-align: center;
-    opacity: 0.7;
-    margin-bottom: 30px;
-  }
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-  .back {
-    display: inline-block;
-    margin-bottom: 20px;
-    text-decoration: none;
-    color: #0b5fb3;
-    font-weight: 600;
-  }
+.subtitle {
+  text-align: center;
+  opacity: 0.9;
+  margin-bottom: 30px;
+  color: rgba(255,255,255,0.95);
+  font-size: 16px;
+  animation: fadeIn 1s ease 0.2s both;
+}
 
-  .grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    max-width: 1150px; 
-    margin: auto;
-    padding: 10px;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  .card {
-    width: 350px;        
-    height: 180px;       
-    perspective: 1000px;
-  }
+.back {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
+}
 
-  .card-inner {
-    width: 100%;
-    height: 100%;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-    position: relative;
-  }
+.back:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateX(-5px);
+}
 
-  .card.flipped .card-inner {
-    transform: rotateY(180deg);
-  }
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 10px;
+}
 
-  .card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 14px 32px rgba(0,0,0,0.18);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
+.card {
+  width: 350px;
+  height: 200px;
+  perspective: 1000px;
+  cursor: pointer;
+  animation: scaleIn 0.6s ease;
+}
 
-  .card-back {
-    transform: rotateY(180deg);
-    overflow-y: auto;
-  }
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 
-  .name { font-weight: bold; color: #0a4e9c; margin-bottom: 4px; font-size: 16px; }
-  .date { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
-  .message { font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; transition: all 0.3s; }
-  .card:hover .message { -webkit-line-clamp: 7; }
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-style: preserve-3d;
+  position: relative;
+}
 
-  .empty {
-    text-align: center;
-    opacity: 0.7;
-    width: 100%;
-    font-size: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-  }
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
 
-  .emoji {
-    position: fixed;
-    bottom: -50px;
-    pointer-events: none;
-    user-select: none;
-    z-index: 1000;
-    animation-name: floatUp;
-    animation-timing-function: linear;
-  }
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 24px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border: 2px solid rgba(255,255,255,0.5);
+}
 
-  @keyframes floatUp {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
-  }
+.card:hover .card-front {
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.7);
+}
 
-  
-  @media (max-width: 1080px){ .card { width: 45%; height: 180px; } }
-  @media (max-width: 700px){ .card { width: 90%; height: 180px; } }
+.card-back {
+  transform: rotateY(180deg);
+  overflow-y: auto;
+}
+
+.name {
+  font-weight: 700;
+  color: #0b5fb3;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.date {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.message {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.card:hover .message {
+  -webkit-line-clamp: 7;
+}
+
+.empty {
+  text-align: center;
+  opacity: 0.9;
+  width: 100%;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: white;
+  font-weight: 600;
+}
+
+.emoji {
+  position: fixed;
+  bottom: -50px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1000;
+  animation: floatUp 6s linear forwards;
+  font-size: 24px;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+}
+
+@media (max-width: 1080px) {
+  .card { width: 45%; height: 200px; }
+}
+
+@media (max-width: 700px) {
+  .card { width: 90%; height: 200px; }
+  h1 { font-size: 28px; }
+}
 </style>
 </head>
 
 <body>
 <a class="back" href="index.html">← Back</a>
-<h1>Secret Messages</h1>
+<h1>🎭 Secret Messages</h1>
 <div class="subtitle" id="count">Loading messages...</div>
 <div class="grid" id="grid"></div>
 
@@ -153,7 +220,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const grid = document.getElementById("grid");
 const count = document.getElementById("count");
 
@@ -161,18 +227,18 @@ function formatTimestamp(ts) {
   if(!ts) return "";
   const date = ts.toDate ? ts.toDate() : new Date(ts);
   const day = date.getDate();
-  const month = date.toLocaleString('en-US',{month:'short'});
-  const hours = date.getHours().toString().padStart(2,'0');
-  const minutes = date.getMinutes().toString().padStart(2,'0');
+  const month = date.toLocaleString('en-US', {month: 'short'});
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
   return `${day} ${month}, ${hours}:${minutes}`;
 }
 
-const q = query(collection(db,"messages"), orderBy("date","desc"), limit(100));
+const q = query(collection(db, "messages"), orderBy("date", "desc"), limit(100));
 
 onSnapshot(q, snapshot => {
   grid.innerHTML = "";
 
-  if(snapshot.empty){
+  if(snapshot.empty) {
     const empty = document.createElement("div");
     empty.className = "empty";
     empty.textContent = "No messages yet 🤫";
@@ -183,15 +249,15 @@ onSnapshot(q, snapshot => {
 
   count.textContent = snapshot.size + " Anonymous messages";
 
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc, index) => {
     const data = doc.data();
     const card = document.createElement("div");
     card.className = "card";
+    card.style.animation = `scaleIn 0.6s ease ${index * 0.05}s both`;
 
     const inner = document.createElement("div");
     inner.className = "card-inner";
 
-    // Front
     const front = document.createElement("div");
     front.className = "card-front";
     const name = document.createElement("div");
@@ -207,22 +273,21 @@ onSnapshot(q, snapshot => {
     front.appendChild(dateDiv);
     front.appendChild(message);
 
-    // Back
     const back = document.createElement("div");
     back.className = "card-back";
     const fullMsg = document.createElement("div");
     fullMsg.style.fontSize = "16px";
-    fullMsg.style.lineHeight = "1.6";
+    fullMsg.style.lineHeight = "1.8";
+    fullMsg.style.color = "#333";
     fullMsg.textContent = data.message || "";
     back.appendChild(fullMsg);
 
-    // Sparkle emoji
     const emoji = document.createElement("div");
     emoji.textContent = "✨";
     emoji.style.position = "absolute";
     emoji.style.top = "10px";
     emoji.style.right = "12px";
-    emoji.style.fontSize = "16px";
+    emoji.style.fontSize = "18px";
     emoji.style.opacity = "0.6";
 
     inner.appendChild(front);
@@ -230,31 +295,26 @@ onSnapshot(q, snapshot => {
     card.appendChild(inner);
     card.appendChild(emoji);
 
-
     card.addEventListener("click", () => card.classList.toggle("flipped"));
 
     grid.appendChild(card);
   });
 });
 
-
-function spawnEmoji(){
-  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭"];
+function spawnEmoji() {
+  const emojis = ["🤫","🥺","😜","😡","🥶","😎","😈","🥱","🫠","😭","💬","💎"];
   const emojiEl = document.createElement("div");
   emojiEl.className = "emoji";
   emojiEl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-
-  const size = Math.random()*20 + 20;
+  const size = Math.random() * 18 + 16;
   emojiEl.style.fontSize = size + "px";
   emojiEl.style.left = Math.random() * (window.innerWidth - size) + "px";
-  emojiEl.style.animationDuration = (Math.random()*4 + 4) + "s";
-
+  emojiEl.style.animationDuration = (Math.random() * 2 + 5) + "s";
   document.body.appendChild(emojiEl);
-
   emojiEl.addEventListener("animationend", () => emojiEl.remove());
 }
 
-setInterval(spawnEmoji, 500);
+setInterval(spawnEmoji, 600);
 </script>
 </body>
 </html>
